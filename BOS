@@ -1,0 +1,905 @@
+repeat wait() until game.Loaded and game:GetService'Players'.LocalPlayer
+local Version = '1.82'
+local plrs = game:GetService'Players'
+local plr = plrs.LocalPlayer
+local vec0 = Vector3.new()
+local prop1000 = PhysicalProperties.new(1000,1000,0,1000,0)
+local cf0 = CFrame.new()
+
+local Settings = {
+    ['Autofarm'] = false,
+    ['AutoPunch'] = false,
+    ['SuperPunch'] = false,
+    ['Virus'] = false,
+    ['AntiAnvil'] = false,
+    ['FakeAccs'] = false,
+    ['AntiSpinner'] = false,
+    ['AntiPunch'] = false,
+    ['AntiFling'] = false,
+    ['AntiVelocity'] = false,
+    ['LessPing'] = false,
+    ['Toggle1'] = false,
+    ['Toggle2'] = false,
+    ['Toggle3'] = false,
+}
+
+local mouse = plr:GetMouse()
+local rs = game:GetService'RunService'
+local pinga
+local points
+local vim = game:GetService'VirtualInputManager'
+local LoopFlingV1 = {}
+local LoopFlingV2 = {}
+local ts = game:GetService'TweenService'
+local duping = false
+
+local HoverTip = Instance.new("TextLabel")
+HoverTip.Name = "HoverTip"
+HoverTip.Parent = game:GetService("CoreGui")
+HoverTip.Size = UDim2.new(0, 200, 0, 30)
+HoverTip.BackgroundColor3 = Color3.fromRGB(140, 140, 140)
+HoverTip.BackgroundTransparency = 0.2
+HoverTip.TextColor3 = Color3.fromRGB(0, 0, 0)
+HoverTip.Text = ""
+HoverTip.Font = Enum.Font.SourceSans
+HoverTip.TextSize = 14
+HoverTip.BorderSizePixel = 0
+HoverTip.Visible = false
+HoverTip.ZIndex = 10
+
+local function updateHoverTip(text)
+    HoverTip.Text = text
+    HoverTip.Visible = true
+    HoverTip.Position = UDim2.new(0, mouse.X + 10, 0, mouse.Y + 10)
+end
+
+local function hideHoverTip()
+    HoverTip.Visible = false
+end
+
+local function findplr(Target)
+    if game:GetService'Players':FindFirstChild(Target) then
+        return game:GetService'Players':FindFirstChild(Target)
+    else
+        for _, player in ipairs(game:GetService'Players':GetPlayers()) do
+            if player.Name:lower():find(Target:lower()) or tostring(player.UserId) == Target then
+                return player
+            end
+        end
+    end
+    return nil
+end
+
+local function toggleSetting(settingName, toggleButton)
+    Settings[settingName] = not Settings[settingName]
+    toggleButton.Text = toggleButton.Name:gsub("Toggle$", ""):gsub("([A-Z])", " %1"):gsub("^ ", "") .. ": " .. tostring(Settings[settingName])
+
+    if settingName == "Autofarm" then
+        if Settings.Autofarm then
+            spawn(function()
+                while Settings.Autofarm do
+                    wait(0.1)
+                end
+            end)
+        end
+    elseif settingName == "AutoPunch" then
+        if Settings.AutoPunch then
+            spawn(function()
+                while Settings.AutoPunch do
+                    wait(0.05)
+                    vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+                    vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+                end
+            end)
+        end
+    elseif settingName == "SuperPunch" then
+        if Settings.SuperPunch then
+
+        else
+
+        end
+    elseif settingName == "Virus" then
+        if Settings.Virus then
+
+            spawn(function()
+                while Settings.Virus do
+                    wait(1)
+                    for _, player in ipairs(plrs:GetPlayers()) do
+                        if player ~= plr and player.Character and player.Character:FindFirstChild("Humanoid") then
+
+                        end
+                    end
+                end
+            end)
+        else
+
+        end
+    elseif settingName == "AntiAnvil" then
+        if Settings.AntiAnvil then
+
+        else
+
+        end
+    elseif settingName == "FakeAccs" then
+        if Settings.FakeAccs then
+
+        else
+
+        end
+    elseif settingName == "AntiSpinner" then
+        if Settings.AntiSpinner then
+
+            pcall(function()
+                repeat wait() until plr.Character and plr.Character:FindFirstChild'HumanoidRootPart' and plr.Character:FindFirstChild'Head'
+                for _,v in next,plr.Character:GetChildren() do
+                    if v:IsA'BasePart' then
+                        v.CustomPhysicalProperties = prop1000
+                    end
+                end
+            end)
+        else
+
+        end
+    elseif settingName == "AntiPunch" then
+        if Settings.AntiPunch then
+
+        else
+
+        end
+    elseif settingName == "AntiFling" then
+        if Settings.AntiFling then
+
+            spawn(function()
+                local char = plr.Character
+                if not char then return end
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                if not hrp then return end
+
+                LoopFlingV1[plr] = rs.Heartbeat:Connect(function()
+                    if hrp.Velocity.Magnitude > 50 then
+                        hrp.Velocity = hrp.Velocity * 0.5
+                    end
+                end)
+                LoopFlingV2[plr] = char.Humanoid.FreeFalling:Connect(function(isFalling)
+                    if isFalling and hrp.Velocity.Magnitude > 50 then
+                        hrp.CFrame = hrp.CFrame - hrp.Velocity * 0.1
+                        hrp.Velocity = vec0
+                        hrp.RotVelocity = vec0
+                    end
+                end)
+            end)
+        else
+
+            if LoopFlingV1[plr] then LoopFlingV1[plr]:Disconnect() LoopFlingV1[plr] = nil end
+            if LoopFlingV2[plr] then LoopFlingV2[plr]:Disconnect() LoopFlingV2[plr] = nil end
+        end
+    elseif settingName == "AntiVelocity" then
+        if Settings.AntiVelocity then
+
+            spawn(function()
+                while Settings.AntiVelocity and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") do
+                    plr.Character.HumanoidRootPart.Velocity = vec0
+                    plr.Character.HumanoidRootPart.RotVelocity = vec0
+                    wait()
+                end
+            end)
+        else
+
+        end
+    elseif settingName == "LessPing" then
+        if Settings.LessPing then
+
+            spawn(function()
+                pcall(function()
+                    repeat rs.RenderStepped:wait() until plr.Character and plr.Character:FindFirstChild'BodyFollowMouse' and plr.Character:FindFirstChild'HeadWaist'
+                    if plr.Character and plr.Character:FindFirstChild'BodyFollowMouse' then
+                        plr.Character.BodyFollowMouse.Disabled = true
+                    end
+                    if plr.Character and plr.Character:FindFirstChild'HeadWaist' then
+                        plr.Character.HeadWaist:FireServer(CFrame.new(0,0.8,0),CFrame.new(0,0.2,0))
+                    end
+                end)
+            end)
+        else
+
+            pcall(function()
+                if plr.Character and plr.Character:FindFirstChild'BodyFollowMouse' then
+                    plr.Character.BodyFollowMouse.Disabled = false
+                end
+            end)
+        end
+    elseif settingName == "Toggle1" then
+
+    elseif settingName == "Toggle2" then
+
+    elseif settingName == "Toggle3" then
+
+    end
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "MainGui"
+ScreenGui.Parent = plr.PlayerGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local Frame = Instance.new("Frame")
+Frame.Name = "MainFrame"
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 500, 0, 350)
+Frame.Position = UDim2.new(0.5, -250, 0.5, -175)
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BackgroundTransparency = 0.500
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+
+local Holder = Instance.new("Frame")
+Holder.Name = "Holder"
+Holder.Parent = Frame
+Holder.Size = UDim2.new(1, -150, 1, 0)
+Holder.Position = UDim2.new(0, 150, 0, 0)
+Holder.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Holder.BackgroundTransparency = 1
+Holder.BorderSizePixel = 0
+
+local Open = Instance.new("TextButton")
+Open.Name = "Open"
+Open.Parent = Frame
+Open.Size = UDim2.new(0, 150, 0, 30)
+Open.Position = UDim2.new(0, 0, 0, 0)
+Open.BackgroundColor3 = Color3.fromRGB(79, 79, 79)
+Open.TextColor3 = Color3.fromRGB(0, 0, 0)
+Open.Text = "Open"
+Open.Font = Enum.Font.SourceSans
+Open.TextSize = 20
+Open.BorderSizePixel = 0
+
+local PageHolder = Instance.new("Frame")
+PageHolder.Name = "PageHolder"
+PageHolder.Parent = Frame
+PageHolder.Size = UDim2.new(0, 150, 1, -30)
+PageHolder.Position = UDim2.new(0, 0, 0, 30)
+PageHolder.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+PageHolder.BackgroundTransparency = 1
+PageHolder.BorderSizePixel = 0
+
+local credits = Instance.new("TextLabel")
+credits.Name = "Credits"
+credits.Parent = Frame
+credits.Size = UDim2.new(0, 100, 0, 20)
+credits.Position = UDim2.new(1, -100, 1, -20)
+credits.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+credits.BackgroundTransparency = 1
+credits.TextColor3 = Color3.fromRGB(0, 0, 0)
+credits.Text = "Credits: YourName"
+credits.Font = Enum.Font.SourceSans
+credits.TextSize = 14
+credits.TextXAlignment = Enum.TextXAlignment.Right
+
+local version = Instance.new("TextLabel")
+version.Name = "Version"
+version.Parent = Frame
+version.Size = UDim2.new(0, 50, 0, 20)
+version.Position = UDim2.new(0, 5, 1, -20)
+version.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+version.BackgroundTransparency = 1
+version.TextColor3 = Color3.fromRGB(0, 0, 0)
+version.Text = Version
+version.Font = Enum.Font.SourceSans
+version.TextSize = 14
+version.TextXAlignment = Enum.TextXAlignment.Left
+
+local ping = Instance.new("TextLabel")
+ping.Name = "PingDisplay"
+ping.Parent = Frame
+ping.Size = UDim2.new(0, 70, 0, 20)
+ping.Position = UDim2.new(0.5, -75, 1, -20)
+ping.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+ping.BackgroundTransparency = 0.2
+ping.TextColor3 = Color3.fromRGB(0, 0, 0)
+ping.Text = "Ping: Loading..."
+ping.Font = Enum.Font.SourceSans
+ping.TextSize = 14
+
+local points = Instance.new("TextLabel")
+points.Name = "PointsDisplay"
+points.Parent = Frame
+points.Size = UDim2.new(0, 70, 0, 20)
+points.Position = UDim2.new(0.5, 5, 1, -20)
+points.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+points.BackgroundTransparency = 0.2
+points.TextColor3 = Color3.fromRGB(0, 0, 0)
+points.Text = "Points: Loading..."
+points.Font = Enum.Font.SourceSans
+points.TextSize = 14
+
+local table = {
+    Global = {page = Instance.new("Frame", Holder), button = Instance.new("TextButton", PageHolder), posX = 6, posY = 6},
+    Combat = {page = Instance.new("Frame", Holder), button = Instance.new("TextButton", PageHolder), posX = 6, posY = 6},
+    Visual = {page = Instance.new("Frame", Holder), button = Instance.new("TextButton", PageHolder), posX = 6, posY = 6},
+    Movement = {page = Instance.new("Frame", Holder), button = Instance.new("TextButton", PageHolder), posX = 6, posY = 6},
+    Misc = {page = Instance.new("Frame", Holder), button = Instance.new("TextButton", PageHolder), posX = 6, posY = 6},
+}
+
+for i,v in next, table do
+    v.page.Name = i
+    v.page.Size = UDim2.new(1, 0, 1, 0)
+    v.page.Position = UDim2.new(0, 0, 0, 0)
+    v.page.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    v.page.BackgroundTransparency = 1
+    v.page.BorderSizePixel = 0
+    v.page.Visible = false
+
+    v.button.Name = i
+    v.button.Size = UDim2.new(1, 0, 0, 28)
+    v.button.BackgroundColor3 = Color3.fromRGB(163, 163, 163)
+    v.button.TextColor3 = Color3.fromRGB(0, 0, 0)
+    v.button.Text = i
+    v.button.Font = Enum.Font.SourceSans
+    v.TextSize = 18
+    v.BorderSizePixel = 0
+
+    if i == "Global" then
+        v.page.Visible = true
+    end
+
+    local layout = Instance.new("UIListLayout", PageHolder)
+    layout.FillDirection = Enum.FillDirection.Vertical
+    layout.Padding = UDim.new(0, 2)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+    v.button.LayoutOrder = layout.LayoutOrder + 1
+
+    v.button.MouseButton1Click:Connect(function()
+        for _,x in next, table do
+            x.page.Visible = false
+        end
+        v.page.Visible = true
+    end)
+end
+
+local Refresh = Instance.new("TextButton")
+Refresh.Name = "Refresh"
+Refresh.Parent = PageHolder
+Refresh.Size = UDim2.new(1, 0, 0, 28)
+Refresh.BackgroundColor3 = Color3.fromRGB(163, 163, 163)
+Refresh.TextColor3 = Color3.fromRGB(189, 0, 0)
+Refresh.Text = "Refresh"
+Refresh.Font = Enum.Font.SourceSans
+Refresh.TextSize = 18
+Refresh.BorderSizePixel = 0
+Refresh.LayoutOrder = 999
+
+Refresh.MouseButton1Click:Connect(function()
+
+end)
+
+local Respawn = Instance.new("TextButton")
+Respawn.Name = "Respawn"
+Respawn.Parent = PageHolder
+Respawn.Size = UDim2.new(1, 0, 0, 28)
+Respawn.BackgroundColor3 = Color3.fromRGB(163, 163, 163)
+Respawn.TextColor3 = Color3.fromRGB(189, 0, 0)
+Respawn.Text = "Respawn"
+Respawn.Font = Enum.Font.SourceSans
+Respawn.TextSize = 18
+Respawn.BorderSizePixel = 0
+Respawn.LayoutOrder = 998
+
+Respawn.MouseButton1Click:Connect(function()
+    if plr.Character then
+        plr.Character:BreakJoints()
+    end
+end)
+
+local function createToggle(parentFrame, text, settingName)
+    local toggle = Instance.new("TextButton")
+    toggle.Name = text:gsub(" ", "") .. "Toggle"
+    toggle.Parent = parentFrame
+    toggle.Size = UDim2.new(0, 150, 0, 22)
+    toggle.Position = UDim2.new(0, parentFrame.posX, 0, parentFrame.posY)
+    toggle.BackgroundColor3 = Color3.fromRGB(163, 163, 163)
+    toggle.TextColor3 = Color3.fromRGB(0, 0, 0)
+    toggle.Text = text .. ": " .. tostring(Settings[settingName])
+    toggle.Font = Enum.Font.SourceSans
+    toggle.TextSize = 14
+    toggle.BorderSizePixel = 0
+
+    parentFrame.posX = parentFrame.posX + 150 + 6
+    if parentFrame.posX > 360 then
+        parentFrame.posX = 6
+        parentFrame.posY = parentFrame.posY + 28
+    end
+
+    toggle.MouseButton1Click:Connect(function()
+        toggleSetting(settingName, toggle)
+    end)
+
+    toggle.MouseEnter:Connect(function()
+        updateHoverTip("Toggles the " .. text .. " feature.")
+    end)
+    toggle.MouseLeave:Connect(hideHoverTip)
+
+    return toggle
+end
+
+local Global = table.Global.page
+createToggle(Global, "Autofarm", "Autofarm")
+createToggle(Global, "AutoPunch", "AutoPunch")
+createToggle(Global, "SuperPunch", "SuperPunch")
+createToggle(Global, "Virus", "Virus")
+createToggle(Global, "AntiAnvil", "AntiAnvil")
+createToggle(Global, "FakeAccs", "FakeAccs")
+createToggle(Global, "AntiSpinner", "AntiSpinner")
+createToggle(Global, "AntiPunch", "AntiPunch")
+createToggle(Global, "AntiFling", "AntiFling")
+createToggle(Global, "AntiVelocity", "AntiVelocity")
+createToggle(Global, "LessPing", "LessPing")
+createToggle(Global, "New Toggle 1", "Toggle1")
+createToggle(Global, "New Toggle 2", "Toggle2")
+createToggle(Global, "New Toggle 3", "Toggle3")
+
+local Combat = table.Combat.page
+createToggle(Combat, "Combat Toggle 1", "CombatToggle1")
+createToggle(Combat, "Combat Toggle 2", "CombatToggle2")
+
+local Visual = table.Visual.page
+createToggle(Visual, "Visual Toggle 1", "VisualToggle1")
+createToggle(Visual, "Visual Toggle 2", "VisualToggle2")
+
+local Movement = table.Movement.page
+createToggle(Movement, "Movement Toggle 1", "MovementToggle1")
+createToggle(Movement, "Movement Toggle 2", "MovementToggle2")
+
+local Misc = table.Misc.page
+
+local Themes = {
+    {
+        Name = "Original Grey",
+        FrameBackground = Color3.fromRGB(0, 0, 0),
+        FrameTransparency = 0.500,
+        OpenButtonBackground = Color3.fromRGB(79, 79, 79),
+        OpenButtonText = Color3.fromRGB(0, 0, 0),
+        PageButtonBackground = Color3.fromRGB(163, 163, 163),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(163, 163, 163),
+        RefreshButtonText = Color3.fromRGB(189, 0, 0),
+        RespawnButtonBackground = Color3.fromRGB(163, 163, 163),
+        RespawnButtonText = Color3.fromRGB(189, 0, 0),
+        HoverTipBackground = Color3.fromRGB(140, 140, 140),
+        BoxBackground = Color3.fromRGB(163, 163, 163),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(0, 0, 0),
+        VersionText = Color3.fromRGB(0, 0, 0),
+        PingTextBackground = Color3.fromRGB(0,255,0),
+        PointsTextBackground = Color3.fromRGB(0,255,0),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "Dark Blue",
+        FrameBackground = Color3.fromRGB(20, 30, 40),
+        FrameTransparency = 0.400,
+        OpenButtonBackground = Color3.fromRGB(50, 70, 90),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(60, 80, 100),
+        PageButtonText = Color3.fromRGB(200, 220, 240),
+        RefreshButtonBackground = Color3.fromRGB(70, 90, 110),
+        RefreshButtonText = Color3.fromRGB(255, 100, 100),
+        RespawnButtonBackground = Color3.fromRGB(70, 90, 110),
+        RespawnButtonText = Color3.fromRGB(255, 100, 100),
+        HoverTipBackground = Color3.fromRGB(80, 100, 120),
+        BoxBackground = Color3.fromRGB(60, 80, 100),
+        BoxText = Color3.fromRGB(255, 255, 255),
+        CreditsText = Color3.fromRGB(200, 220, 240),
+        VersionText = Color3.fromRGB(200, 220, 240),
+        PingTextBackground = Color3.fromRGB(30,144,255),
+        PointsTextBackground = Color3.fromRGB(30,144,255),
+        PingPointsText = Color3.fromRGB(255,255,255),
+    },
+    {
+        Name = "Green Forest",
+        FrameBackground = Color3.fromRGB(34, 139, 34),
+        FrameTransparency = 0.500,
+        OpenButtonBackground = Color3.fromRGB(60, 179, 113),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(50, 205, 50),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(46, 139, 87),
+        RefreshButtonText = Color3.fromRGB(255, 255, 0),
+        RespawnButtonBackground = Color3.fromRGB(46, 139, 87),
+        RespawnButtonText = Color3.fromRGB(255, 255, 0),
+        HoverTipBackground = Color3.fromRGB(85, 107, 47),
+        BoxBackground = Color3.fromRGB(50, 205, 50),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(240, 255, 240),
+        VersionText = Color3.fromRGB(240, 255, 240),
+        PingTextBackground = Color3.fromRGB(124,252,0),
+        PointsTextBackground = Color3.fromRGB(124,252,0),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "Royal Purple",
+        FrameBackground = Color3.fromRGB(75, 0, 130),
+        FrameTransparency = 0.450,
+        OpenButtonBackground = Color3.fromRGB(138, 43, 226),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(147, 112, 219),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(128, 0, 128),
+        RefreshButtonText = Color3.fromRGB(255, 215, 0),
+        RespawnButtonBackground = Color3.fromRGB(128, 0, 128),
+        RespawnButtonText = Color3.fromRGB(255, 215, 0),
+        HoverTipBackground = Color3.fromRGB(106, 90, 205),
+        BoxBackground = Color3.fromRGB(147, 112, 219),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(230, 230, 250),
+        VersionText = Color3.fromRGB(230, 230, 250),
+        PingTextBackground = Color3.fromRGB(153,50,204),
+        PointsTextBackground = Color3.fromRGB(153,50,204),
+        PingPointsText = Color3.fromRGB(255,255,255),
+    },
+    {
+        Name = "Ocean Blue",
+        FrameBackground = Color3.fromRGB(0, 74, 173),
+        FrameTransparency = 0.400,
+        OpenButtonBackground = Color3.fromRGB(0, 119, 190),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(0, 168, 232),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(0, 95, 158),
+        RefreshButtonText = Color3.fromRGB(255, 193, 7),
+        RespawnButtonBackground = Color3.fromRGB(0, 95, 158),
+        RespawnButtonText = Color3.fromRGB(255, 193, 7),
+        HoverTipBackground = Color3.fromRGB(0, 105, 175),
+        BoxBackground = Color3.fromRGB(0, 168, 232),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(227, 242, 253),
+        VersionText = Color3.fromRGB(227, 242, 253),
+        PingTextBackground = Color3.fromRGB(100,149,237),
+        PointsTextBackground = Color3.fromRGB(100,149,237),
+        PingPointsText = Color3.fromRGB(255,255,255),
+    },
+    {
+        Name = "Fiery Red",
+        FrameBackground = Color3.fromRGB(178, 34, 34),
+        FrameTransparency = 0.550,
+        OpenButtonBackground = Color3.fromRGB(220, 20, 60),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(255, 99, 71),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(139, 0, 0),
+        RefreshButtonText = Color3.fromRGB(255, 255, 0),
+        RespawnButtonBackground = Color3.fromRGB(139, 0, 0),
+        RespawnButtonText = Color3.fromRGB(255, 255, 0),
+        HoverTipBackground = Color3.fromRGB(165, 42, 42),
+        BoxBackground = Color3.fromRGB(255, 99, 71),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(255, 240, 245),
+        VersionText = Color3.fromRGB(255, 240, 245),
+        PingTextBackground = Color3.fromRGB(255,69,0),
+        PointsTextBackground = Color3.fromRGB(255,69,0),
+        PingPointsText = Color3.fromRGB(255,255,255),
+    },
+    {
+        Name = "Sunny Yellow",
+        FrameBackground = Color3.fromRGB(255, 193, 7),
+        FrameTransparency = 0.400,
+        OpenButtonBackground = Color3.fromRGB(255, 213, 0),
+        OpenButtonText = Color3.fromRGB(0, 0, 0),
+        PageButtonBackground = Color3.fromRGB(255, 235, 59),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(255, 179, 0),
+        RefreshButtonText = Color3.fromRGB(139, 69, 19),
+        RespawnButtonBackground = Color3.fromRGB(255, 179, 0),
+        RespawnButtonText = Color3.fromRGB(139, 69, 19),
+        HoverTipBackground = Color3.fromRGB(255, 202, 40),
+        BoxBackground = Color3.fromRGB(255, 235, 59),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(100, 100, 0),
+        VersionText = Color3.fromRGB(100, 100, 0),
+        PingTextBackground = Color3.fromRGB(255,255,0),
+        PointsTextBackground = Color3.fromRGB(255,255,0),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "Autumn Orange",
+        FrameBackground = Color3.fromRGB(218, 112, 214),
+        FrameTransparency = 0.500,
+        OpenButtonBackground = Color3.fromRGB(255, 165, 0),
+        OpenButtonText = Color3.fromRGB(0, 0, 0),
+        PageButtonBackground = Color3.fromRGB(255, 140, 0),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(205, 133, 63),
+        RefreshButtonText = Color3.fromRGB(0, 0, 0),
+        RespawnButtonBackground = Color3.fromRGB(205, 133, 63),
+        RespawnButtonText = Color3.fromRGB(0, 0, 0),
+        HoverTipBackground = Color3.fromRGB(244, 164, 96),
+        BoxBackground = Color3.fromRGB(255, 140, 0),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(139, 69, 19),
+        VersionText = Color3.fromRGB(139, 69, 19),
+        PingTextBackground = Color3.fromRGB(255,165,0),
+        PointsTextBackground = Color3.fromRGB(255,165,0),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "White Smoke",
+        FrameBackground = Color3.fromRGB(245, 245, 245),
+        FrameTransparency = 0.200,
+        OpenButtonBackground = Color3.fromRGB(220, 220, 220),
+        OpenButtonText = Color3.fromRGB(0, 0, 0),
+        PageButtonBackground = Color3.fromRGB(230, 230, 230),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(210, 210, 210),
+        RefreshButtonText = Color3.fromRGB(255, 0, 0),
+        RespawnButtonBackground = Color3.fromRGB(210, 210, 210),
+        RespawnButtonText = Color3.fromRGB(255, 0, 0),
+        HoverTipBackground = Color3.fromRGB(200, 200, 200),
+        BoxBackground = Color3.fromRGB(230, 230, 230),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(50, 50, 50),
+        VersionText = Color3.fromRGB(50, 50, 50),
+        PingTextBackground = Color3.fromRGB(192,192,192),
+        PointsTextBackground = Color3.fromRGB(192,192,192),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "Pink Blossom",
+        FrameBackground = Color3.fromRGB(255, 192, 203),
+        FrameTransparency = 0.400,
+        OpenButtonBackground = Color3.fromRGB(255, 105, 180),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(255, 182, 193),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(255, 20, 147),
+        RefreshButtonText = Color3.fromRGB(139, 0, 0),
+        RespawnButtonBackground = Color3.fromRGB(255, 20, 147),
+        RespawnButtonText = Color3.fromRGB(139, 0, 0),
+        HoverTipBackground = Color3.fromRGB(255, 153, 185),
+        BoxBackground = Color3.fromRGB(255, 182, 193),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(100, 0, 50),
+        VersionText = Color3.fromRGB(100, 0, 50),
+        PingTextBackground = Color3.fromRGB(255,105,180),
+        PointsTextBackground = Color3.fromRGB(255,105,180),
+        PingPointsText = Color3.fromRGB(255,255,255),
+    },
+    {
+        Name = "Cyberpunk",
+        FrameBackground = Color3.fromRGB(20, 20, 20),
+        FrameTransparency = 0.300,
+        OpenButtonBackground = Color3.fromRGB(0, 255, 255),
+        OpenButtonText = Color3.fromRGB(0, 0, 0),
+        PageButtonBackground = Color3.fromRGB(255, 0, 255),
+        PageButtonText = Color3.fromRGB(255, 255, 255),
+        RefreshButtonBackground = Color3.fromRGB(0, 255, 0),
+        RefreshButtonText = Color3.fromRGB(0, 0, 0),
+        RespawnButtonBackground = Color3.fromRGB(0, 255, 0),
+        RespawnButtonText = Color3.fromRGB(0, 0, 0),
+        HoverTipBackground = Color3.fromRGB(50, 50, 50),
+        BoxBackground = Color3.fromRGB(255, 0, 255),
+        BoxText = Color3.fromRGB(255, 255, 255),
+        CreditsText = Color3.fromRGB(0, 255, 255),
+        VersionText = Color3.fromRGB(0, 255, 255),
+        PingTextBackground = Color3.fromRGB(127,0,255),
+        PointsTextBackground = Color3.fromRGB(127,0,255),
+        PingPointsText = Color3.fromRGB(255,255,255),
+    },
+    {
+        Name = "Gold Royale",
+        FrameBackground = Color3.fromRGB(100, 80, 0),
+        FrameTransparency = 0.400,
+        OpenButtonBackground = Color3.fromRGB(218, 165, 32),
+        OpenButtonText = Color3.fromRGB(0, 0, 0),
+        PageButtonBackground = Color3.fromRGB(255, 215, 0),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(184, 134, 11),
+        RefreshButtonText = Color3.fromRGB(0, 0, 0),
+        RespawnButtonBackground = Color3.fromRGB(184, 134, 11),
+        RespawnButtonText = Color3.fromRGB(0, 0, 0),
+        HoverTipBackground = Color3.fromRGB(205, 133, 63),
+        BoxBackground = Color3.fromRGB(255, 215, 0),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(255, 223, 0),
+        VersionText = Color3.fromRGB(255, 223, 0),
+        PingTextBackground = Color3.fromRGB(255,200,0),
+        PointsTextBackground = Color3.fromRGB(255,200,0),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "Silver Elegance",
+        FrameBackground = Color3.fromRGB(192, 192, 192),
+        FrameTransparency = 0.300,
+        OpenButtonBackground = Color3.fromRGB(169, 169, 169),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(211, 211, 211),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(128, 128, 128),
+        RefreshButtonText = Color3.fromRGB(0, 0, 0),
+        RespawnButtonBackground = Color3.fromRGB(128, 128, 128),
+        RespawnButtonText = Color3.fromRGB(0, 0, 0),
+        HoverTipBackground = Color3.fromRGB(150, 150, 150),
+        BoxBackground = Color3.fromRGB(211, 211, 211),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(50, 50, 50),
+        VersionText = Color3.fromRGB(50, 50, 50),
+        PingTextBackground = Color3.fromRGB(176,196,222),
+        PointsTextBackground = Color3.fromRGB(176,196,222),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "Aqua Marine",
+        FrameBackground = Color3.fromRGB(0, 139, 139),
+        FrameTransparency = 0.400,
+        OpenButtonBackground = Color3.fromRGB(0, 206, 209),
+        OpenButtonText = Color3.fromRGB(0, 0, 0),
+        PageButtonBackground = Color3.fromRGB(64, 224, 208),
+        PageButtonText = Color3.fromRGB(0, 0, 0),
+        RefreshButtonBackground = Color3.fromRGB(0, 128, 128),
+        RefreshButtonText = Color3.fromRGB(255, 255, 255),
+        RespawnButtonBackground = Color3.fromRGB(0, 128, 128),
+        RespawnButtonText = Color3.fromRGB(255, 255, 255),
+        HoverTipBackground = Color3.fromRGB(72, 209, 204),
+        BoxBackground = Color3.fromRGB(64, 224, 208),
+        BoxText = Color3.fromRGB(0, 0, 0),
+        CreditsText = Color3.fromRGB(240, 248, 255),
+        VersionText = Color3.fromRGB(240, 248, 255),
+        PingTextBackground = Color3.fromRGB(127,255,212),
+        PointsTextBackground = Color3.fromRGB(127,255,212),
+        PingPointsText = Color3.fromRGB(0,0,0),
+    },
+    {
+        Name = "Deep Red",
+        FrameBackground = Color3.fromRGB(128, 0, 0),
+        FrameTransparency = 0.550,
+        OpenButtonBackground = Color3.fromRGB(178, 34, 34),
+        OpenButtonText = Color3.fromRGB(255, 255, 255),
+        PageButtonBackground = Color3.fromRGB(220, 20, 60),
+        PageButtonText = Color3.fromRGB(255, 255, 255),
+        RefreshButtonBackground = Color3.fromRGB(100, 0, 0),
+        RefreshButtonText = Color3.fromRGB(255, 255, 0),
+        RespawnButtonBackground = Color3.fromRGB(100, 0, 0),
+        RespawnButtonText = Color3.fromRGB(255, 255, 0),
+        HoverTipBackground = Color3.fromRGB(150, 0, 0),
+        BoxBackground = Color3.fromRGB(220, 20, 60),
+        BoxText = Color3.fromRGB(255, 255, 255),
+        CreditsText = Color3.fromRGB(255, 240, 245),
+        VersionText = Color3.fromRGB(255, 240, 245),
+        PingTextBackground = Color3.fromRGB(165,42,42),
+        PointsTextBackground = Color3.fromRGB(165,42,42),
+        PingPointsText = Color3.fromRGB(255,255,255),
+    }
+}
+
+local function applyTheme(theme)
+    Frame.BackgroundColor3 = theme.FrameBackground
+    Frame.BackgroundTransparency = theme.FrameTransparency
+    Open.BackgroundColor3 = theme.OpenButtonBackground
+    Open.TextColor3 = theme.OpenButtonText
+    Refresh.BackgroundColor3 = theme.RefreshButtonBackground
+    Refresh.TextColor3 = theme.RefreshButtonText
+    Respawn.BackgroundColor3 = theme.RespawnButtonBackground
+    Respawn.TextColor3 = theme.RespawnButtonText
+    HoverTip.BackgroundColor3 = theme.HoverTipBackground
+    credits.TextColor3 = theme.CreditsText
+    version.TextColor3 = theme.VersionText
+    ping.BackgroundColor3 = theme.PingTextBackground
+    points.BackgroundColor3 = theme.PointsTextBackground
+    ping.TextColor3 = theme.PingPointsText
+    points.TextColor3 = theme.PingPointsText
+
+    for _, pageButton in next, PageHolder:GetChildren() do
+        if pageButton:IsA("TextButton") and pageButton.Name ~= "Open" and pageButton.Name ~= "Refresh" and pageButton.Name ~= "Respawn" then
+            pageButton.BackgroundColor3 = theme.PageButtonBackground
+            pageButton.TextColor3 = theme.PageButtonText
+        end
+    end
+
+    for _, pageFrame in next, Holder:GetChildren() do
+        if pageFrame:IsA("Frame") then
+            for _, child in next, pageFrame:GetChildren() do
+                if child:IsA("TextButton") and child.Name:find("Toggle") then
+                    child.BackgroundColor3 = theme.PageButtonBackground
+                    child.TextColor3 = theme.PageButtonText
+                elseif child:IsA("TextBox") then
+                    child.BackgroundColor3 = theme.BoxBackground
+                    child.TextColor3 = theme.BoxText
+                end
+            end
+        end
+    end
+end
+
+local ThemeDropdown = Instance.new("ComboBox", Misc)
+ThemeDropdown.Name = "ThemeSelector"
+ThemeDropdown.Size = UDim2.new(0, 150, 0, 22)
+ThemeDropdown.Position = UDim2.new(0, table.Misc.posX, 0, table.Misc.posY)
+ThemeDropdown.PlaceholderText = "Select Theme"
+ThemeDropdown.Font = Enum.Font.SourceSans
+ThemeDropdown.TextColor3 = Color3.fromRGB(0, 0, 0)
+ThemeDropdown.BackgroundColor3 = Color3.fromRGB(163, 163, 163)
+ThemeDropdown.BackgroundTransparency = 0.500
+
+for _, theme in ipairs(Themes) do
+    ThemeDropdown:AddItem(theme.Name)
+end
+
+ThemeDropdown.ItemSelected:Connect(function(item)
+    for _, theme in ipairs(Themes) do
+        if theme.Name == item then
+            applyTheme(theme)
+            break
+        end
+    end
+end)
+
+table.Misc.posX = table.Misc.posX + 150 + 6
+if table.Misc.posX > 360 then
+    table.Misc.posX = 6
+    table.Misc.posY = table.Misc.posY + 28
+end
+
+applyTheme(Themes[1])
+
+local isGuiOpen = true
+
+Open.MouseButton1Click:Connect(function()
+    isGuiOpen = not isGuiOpen
+    Frame.Visible = isGuiOpen
+    Open.Text = isGuiOpen and "Close" or "Open"
+end)
+
+Frame.Visible = isGuiOpen
+Open.Text = isGuiOpen and "Close" or "Open"
+
+game:GetService'RunService'.Heartbeat:Connect(function()
+    if Settings['AntiAnvil'] then
+        for _,v in next,plrs:GetPlayers() do
+            pcall(function()
+                if v.Character:FindFirstChild'Anvil' then
+                    v.Character.Anvil.send:FireServer(v.Character.HumanoidRootPart.CFrame.p+Vector3.new(0,10,0))
+                end
+            end)
+        end
+    end
+end)
+
+plr.CharacterAdded:Connect(function()
+    pcall(function()
+        if Settings['AntiSpinner'] then
+            repeat wait() until plr.Character:FindFirstChild'HumanoidRootPart' and plr.Character:FindFirstChild'Head'
+            for _,v in next,plr.Character:GetChildren() do
+                if v:IsA'BasePart' then
+                    v.CustomPhysicalProperties = prop1000
+                end
+            end
+        end
+        if Settings['LessPing'] then
+            spawn(function()
+                pcall(function()
+                    repeat rs.RenderStepped:wait() until plr.Character:FindFirstChild'BodyFollowMouse' and plr.Character:FindFirstChild'HeadWaist'
+                    if plr.Character and plr.Character:FindFirstChild'BodyFollowMouse' then
+                        plr.Character.BodyFollowMouse.Disabled = true
+                    end
+                    if plr.Character and plr.Character:FindFirstChild'HeadWaist' then
+                        plr.Character.HeadWaist:FireServer(CFrame.new(0,0.8,0),CFrame.new(0,0.2,0))
+                    end
+                end)
+            end)
+        end
+    end)
+end)
+
+spawn(function()
+    while true do
+        wait(1)
+        pinga = game:GetService'Stats'.Network.Ping:GetValue()
+        if plr and plr.leaderstats and plr.leaderstats:FindFirstChild("Points") then
+            points = plr.leaderstats.Points.Value
+        else
+            points = 0
+        end
+        ping.Text = "Ping: " .. math.floor(pinga * 1000) .. "ms"
+        points.Text = "Points: " .. points
+    end
+end)
