@@ -20,7 +20,7 @@ Live Theme Switching – Noqt:ApplyTheme("Sky")
 Example Usage
 --]]
 
-local Noqt = loadstring(game:HttpGet("RAW_LINK_HERE"))()
+local Noqt = loadstring(game:HttpGet("https://raw.githubusercontent.com/FearNoqt/NoqtUI/refs/heads/main/Documations"))()
 local UI = Noqt():MakeWindow({ Name = "Noqt UI Hub" })
 
 UI:AddLabel("Welcome to Noqt UI")
@@ -71,7 +71,7 @@ UI:AddKeybind({
 
 Noqt:ApplyTheme("Cyber") -- Available: Dark, Sky, Cyber, Light
 Setup Instructions
-local Noqt = loadstring(game:HttpGet("YOUR_RAW_FILE_LINK_HERE"))()
+local Noqt = loadstring(game:HttpGet("https://raw.githubusercontent.com/FearNoqt/NoqtUI/refs/heads/main/Documations"))()
 Custom Themes
 
 Noqt:AddTheme("Neon", {
